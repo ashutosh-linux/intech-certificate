@@ -17,7 +17,7 @@ const Home = () => {
     try {
       // Simulate a "searching" delay for effect
       await new Promise(resolve => setTimeout(resolve, 600)); 
-      const response = await axios.get(`http://localhost:5000/api/certificate/${certId}`);
+      const response = await axios.get(`/api/certificate/${certId}`);
       setResult(response.data);
     } catch (err) {
       setError('Certificate ID not found in our records.');

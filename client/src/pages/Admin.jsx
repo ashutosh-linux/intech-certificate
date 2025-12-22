@@ -23,7 +23,7 @@ const Admin = () => {
   };
 
   const fetchData = async () => {
-    try { const res = await axios.get('http://localhost:5000/api/certificates'); setCertificates(res.data); } 
+    try { const res = await axios.get('/api/certificates'); setCertificates(res.data); } 
     catch (err) { console.error("Error"); }
   };
 
@@ -31,8 +31,8 @@ const Admin = () => {
 
   const handleDelete = async (id) => {
     if(window.confirm('Delete this record?')) {
-      await axios.delete(`http://localhost:5000/api/certificate/${id}`);
-      fetchData();
+    await axios.delete(`/api/certificate/${id}`);
+    fetchData();
     }
   };
 
@@ -43,7 +43,7 @@ const Admin = () => {
     if(file) data.append('pdf', file);
 
     try {
-      await axios.post('http://localhost:5000/api/upload', data, { headers: { 'Content-Type': 'multipart/form-data' } });
+      await axios.post('/api/upload', data, { headers: { 'Content-Type': 'multipart/form-data' } });
       alert('Success'); setShowForm(false); fetchData();
     } catch (err) { alert('Failed'); }
   };
