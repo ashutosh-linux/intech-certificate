@@ -1,0 +1,307 @@
+/* About Page Styles */
+
+:root {
+  --primary: #00d4ff;
+  --primary-dark: #0099cc;
+  --bg-dark: #0a1628;
+  --bg-darker: #050d1a;
+  --text-light: #e0e7ee;
+  --text-secondary: #b0c4de;
+  --card-bg: rgba(26, 42, 74, 0.5);
+  --border-color: rgba(0, 212, 255, 0.2);
+}
+
+.about-wrapper {
+  background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-darker) 50%, var(--bg-dark) 100%);
+  color: var(--text-light);
+  min-height: 100vh;
+}
+
+/* Navigation */
+.nav-bar {
+  background: rgba(10, 22, 40, 0.95);
+  border-bottom: 2px solid var(--primary);
+  padding: 15px 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+}
+
+.nav-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.brand-text h1 {
+  font-size: 18px;
+  color: var(--primary);
+  margin: 0;
+}
+
+.brand-text p {
+  font-size: 10px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 25px;
+}
+
+.nav-links a {
+  color: var(--text-light);
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+  color: var(--primary);
+}
+
+/* Header */
+.about-header {
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(26, 42, 74, 0.3));
+  padding: 80px 0;
+  text-align: center;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.about-header h1 {
+  font-size: 48px;
+  font-weight: 800;
+  margin-bottom: 15px;
+}
+
+.about-header p {
+  font-size: 18px;
+  color: var(--text-secondary);
+}
+
+/* Container */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 30px;
+}
+
+/* Mission & Vision */
+.mission-vision {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  padding: 80px 0;
+}
+
+.mv-card {
+  background: var(--card-bg);
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  padding: 40px;
+  transition: all 0.3s ease;
+}
+
+.mv-card:hover {
+  border-color: var(--primary);
+  transform: translateY(-8px);
+  box-shadow: 0 15px 40px rgba(0, 212, 255, 0.2);
+}
+
+.mv-card h2 {
+  font-size: 28px;
+  margin-bottom: 20px;
+  color: var(--primary);
+}
+
+.mv-card p {
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--text-secondary);
+}
+
+/* Why Choose Us */
+.why-choose-us {
+  padding: 80px 0;
+}
+
+.why-choose-us h2 {
+  font-size: 36px;
+  text-align: center;
+  margin-bottom: 60px;
+  color: var(--text-light);
+}
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+}
+
+.benefit-card {
+  background: rgba(10, 22, 40, 0.6);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 35px 25px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.benefit-card:hover {
+  border-color: var(--primary);
+  transform: translateY(-8px);
+  box-shadow: 0 15px 40px rgba(0, 212, 255, 0.2);
+}
+
+.benefit-icon {
+  color: var(--primary);
+  margin-bottom: 15px;
+}
+
+.benefit-card h3 {
+  font-size: 18px;
+  margin-bottom: 12px;
+  color: var(--text-light);
+}
+
+.benefit-card p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* Stats Section */
+.stats-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 30px;
+  padding: 80px 0;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.05), rgba(147, 112, 219, 0.05));
+  border-radius: 12px;
+  padding: 60px 40px;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-item h3 {
+  font-size: 48px;
+  font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 10px;
+}
+
+.stat-item p {
+  font-size: 16px;
+  color: var(--text-secondary);
+}
+
+/* Our Journey */
+.our-journey {
+  padding: 80px 0;
+}
+
+.our-journey h2 {
+  font-size: 36px;
+  margin-bottom: 40px;
+  color: var(--text-light);
+  text-align: center;
+}
+
+.our-journey p {
+  font-size: 16px;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  margin-bottom: 25px;
+  text-align: justify;
+}
+
+/* Footer */
+.about-footer {
+  background: rgba(10, 22, 40, 0.95);
+  border-top: 2px solid var(--border-color);
+  padding: 30px 0;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 13px;
+  margin-top: 80px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .about-header h1 {
+    font-size: 36px;
+  }
+
+  .mission-vision {
+    grid-template-columns: 1fr;
+  }
+
+  .why-choose-us h2 {
+    font-size: 28px;
+  }
+
+  .stat-item h3 {
+    font-size: 36px;
+  }
+
+  .nav-links {
+    gap: 12px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 640px) {
+  .about-header h1 {
+    font-size: 28px;
+  }
+
+  .about-header p {
+    font-size: 14px;
+  }
+
+  .mv-card {
+    padding: 25px;
+  }
+
+  .mv-card h2 {
+    font-size: 22px;
+  }
+
+  .stat-item h3 {
+    font-size: 28px;
+  }
+
+  .stat-item p {
+    font-size: 13px;
+  }
+
+  .our-journey p {
+    text-align: left;
+  }
+}

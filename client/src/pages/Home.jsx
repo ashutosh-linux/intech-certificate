@@ -1,13 +1,21 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Search, Download, CheckCircle, AlertCircle, GraduationCap } from 'lucide-react';
+import { Download, CheckCircle, AlertCircle, GraduationCap, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import '../styles/Home.css';
 
 const Home = () => {
   const [certId, setCertId] = useState('');
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const formatDate = (value) => {
+    if (!value) return '-';
+    const d = new Date(value);
+    if (isNaN(d)) return value; // fallback to raw string
+    return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' });
+  };
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -17,7 +25,8 @@ const Home = () => {
     try {
       // Simulate a "searching" delay for effect
       await new Promise(resolve => setTimeout(resolve, 600)); 
-      const response = await axios.get(`/api/certificate/${certId}`);
+      const response = await axios.get(`http://localhost:5000/api/certificate/${certId}`);
+      console.log("Database Response:", response.data);
       setResult(response.data);
     } catch (err) {
       setError('Certificate ID not found in our records.');
@@ -27,38 +36,47 @@ const Home = () => {
   };
 
   return (
-    <div>
+    <div className="home-wrapper">
       {/* Navigation */}
-      <nav className="navbar">
-        <div className="container between flex">
-          <div className="nav-logo">
-            <GraduationCap size={28} />
-            <span>INTECH COMPUTER EDUCATION</span>
+      <nav className="nav-bar">
+        <div className="nav-container">
+          <div className="nav-brand">
+            <div className="logo-icon">Ⓘ</div>
+            <div className="brand-text">
+              <h1>INTECH</h1>
+              <p>Computer Education</p>
+            </div>
           </div>
-          <Link to="/admin" className="btn btn-outline">Admin Login</Link>
+          <ul className="nav-links">
+            <li><Link to="/home">Home</Link></li>
+            <li><Link to="/courses">Courses</Link></li>
+            <li><Link to="/about">About Us</Link></li>
+            <li><Link to="/contact">Contact</Link></li>
+            <li><Link to="/admin" className="nav-link-admin">Admin Login</Link></li>
+          </ul>
         </div>
       </nav>
 
-      {/* Main Hero Section */}
-      <div className="container" style={{ marginTop: '60px', paddingBottom: '60px' }}>
-        <div style={{ maxWidth: '700px', margin: '0 auto' }}>
+      {/* Main Content */}
+      <div className="home-container">
+        <div className="cert-section">
           
-          <div className="text-center" style={{ marginBottom: '40px' }}>
-            <h1 style={{ fontSize: '32px', marginBottom: '10px', color: '#1a202c' }}>VIEW YOUR CERTIFICATE</h1>
-            <p style={{ color: '#718096' }}>Enter the unique certificate ID to verify.</p>
+          <div className="cert-header">
+            <h1>VIEW YOUR CERTIFICATE</h1>
+            <p>Enter the unique certificate ID to verify.</p>
           </div>
 
           {/* Search Card */}
-          <div className="card">
-            <form onSubmit={handleSearch} className="flex gap-10">
+          <div className="cert-card">
+            <form onSubmit={handleSearch} className="search-form">
               <input 
                 type="text" 
-                className="input-field" 
+                className="cert-input" 
                 placeholder="Enter Certificate ID (e.g. CERT-123)" 
                 value={certId}
                 onChange={(e) => setCertId(e.target.value)}
               />
-              <button type="submit" className="btn btn-primary" disabled={loading}>
+              <button type="submit" className="cert-btn" disabled={loading}>
                 {loading ? 'Searching...' : 'Verify Now'}
               </button>
             </form>
@@ -66,39 +84,122 @@ const Home = () => {
 
           {/* Error Message */}
           {error && (
-            <div className="card fade-in" style={{ marginTop: '20px', background: '#fff5f5', border: '1px solid #feb2b2', color: '#c53030', display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <AlertCircle size={20}/> {error}
+            <div className="error-message">
+              <AlertCircle size={20}/>
+              <span>{error}</span>
             </div>
           )}
 
           {/* Result Card */}
           {result && (
-            <div className="card fade-in" style={{ marginTop: '30px', borderTop: '4px solid #0044cc' }}>
-              <div className="flex between" style={{ marginBottom: '20px', borderBottom: '1px solid #eee', paddingBottom: '15px' }}>
-                <h2 style={{ fontSize: '18px', fontWeight: 'bold' }}>Certificate Details</h2>
-                <span className="badge badge-green flex center gap-10"><CheckCircle size={14}/> Valid Record</span>
+            <div className="result-card">
+              <div className="result-header">
+                <h2>Certificate Details</h2>
+                <span className="badge-success"><CheckCircle size={14}/> Valid Record</span>
               </div>
 
-              <table style={{ marginBottom: '25px' }}>
-                <tbody>
-                  <tr><td style={{ fontWeight: 'bold', width: '30%' }}>Student Name</td><td>{result.name}</td></tr>
-                  <tr><td style={{ fontWeight: 'bold' }}>Certificate ID</td><td style={{ fontFamily: 'monospace', color: '#0044cc' }}>{result.certId}</td></tr>
-                  <tr><td style={{ fontWeight: 'bold' }}>Course Name</td><td>{result.course}</td></tr>
-                  <tr><td style={{ fontWeight: 'bold' }}>Score / Grade</td><td>{result.score} ({result.grade})</td></tr>
-                  <tr><td style={{ fontWeight: 'bold' }}>Issued Date</td><td>{result.date}</td></tr>
-                </tbody>
-              </table>
+              <div className="cert-details">
+                <div className="detail-row">
+                  <span className="detail-label">Certificate Number</span>
+                  <span className="detail-value cert-id">{result?.certId || '-'}</span>
+                </div>
+                <div className="detail-row">
+                  <span className="detail-label">Registration Number</span>
+                  <span className="detail-value">{result?.registrationNumber || '-'}</span>
+                </div>
+                <div className="detail-row">
+                  <span className="detail-label">Student Name</span>
+                  <span className="detail-value">{result?.name || '-'}</span>
+                </div>
+                <div className="detail-row">
+                  <span className="detail-label">Father's Name</span>
+                  <span className="detail-value">{result?.fatherName || '-'}</span>
+                </div>
+                <div className="detail-row">
+                  <span className="detail-label">Date of Birth</span>
+                  <span className="detail-value">{formatDate(result?.dateOfBirth)}</span>
+                </div>
+                <div className="detail-row">
+                  <span className="detail-label">Course Name</span>
+                  <span className="detail-value">{result?.course || '-'}</span>
+                </div>
+                <div className="detail-row">
+                  <span className="detail-label">Course Duration</span>
+                  <span className="detail-value">{result?.courseDuration || '-'}</span>
+                </div>
+                <div className="detail-row">
+                  <span className="detail-label">Period - From</span>
+                  <span className="detail-value">{result?.durationFrom || '-'}</span>
+                </div>
+                <div className="detail-row">
+                  <span className="detail-label">Period - To</span>
+                  <span className="detail-value">{result?.durationTo || '-'}</span>
+                </div>
+                <div className="detail-row">
+                  <span className="detail-label">Certificate Issue Date</span>
+                  <span className="detail-value">{formatDate(result?.issueDate)}</span>
+                </div>
+                <div className="detail-row">
+                  <span className="detail-label">Full Marks</span>
+                  <span className="detail-value">{result?.fullMarks ?? '-'}</span>
+                </div>
+                <div className="detail-row">
+                  <span className="detail-label">Marks Obtained</span>
+                  <span className="detail-value">{result?.marksObtained ?? '-'}</span>
+                </div>
+                <div className="detail-row">
+                  <span className="detail-label">Percentage</span>
+                  <span className="detail-value">{result?.percentage ? `${result.percentage}%` : '-'}</span>
+                </div>
+                <div className="detail-row">
+                  <span className="detail-label">Grade</span>
+                  <span className="detail-value">{result?.grade ? <span className="grade-badge">{result.grade}</span> : '-'}</span>
+                </div>
+                <div className="detail-row">
+                  <span className="detail-label">Center</span>
+                  <span className="detail-value">{result?.center || '-'}</span>
+                </div>
+              </div>
 
-              <div className="text-center">
-                <a href={`http://localhost:5000/uploads/${result.pdfFileName}`} target="_blank" className="btn btn-primary w-full center">
+              {result?.pdfFileName && (
+                <a href={`http://localhost:5000/uploads/${result.pdfFileName}`} target="_blank" className="download-btn">
                   <Download size={18}/> Download Official Certificate PDF
                 </a>
-              </div>
+              )}
             </div>
           )}
 
         </div>
       </div>
+
+      {/* Navigation Links Section */}
+      <section className="nav-section">
+        <div className="container nav-content">
+          <h3>Explore More</h3>
+          <div className="nav-links-grid">
+            <Link to="/courses" className="nav-card">
+              <span>View Courses</span>
+              <ArrowRight size={20} />
+            </Link>
+            <Link to="/about" className="nav-card">
+              <span>About Us</span>
+              <ArrowRight size={20} />
+            </Link>
+            <Link to="/contact" className="nav-card">
+              <span>Contact Us</span>
+              <ArrowRight size={20} />
+            </Link>
+            </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="home-footer">
+        <div className="container">
+          <p>© 2026 Intech Groups. All Rights Reserved.</p>
+          <p>Website Design by INTECH GROUPS.</p>
+        </div>
+      </footer>
     </div>
   );
 };

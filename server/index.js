@@ -26,13 +26,21 @@ mongoose.connect(MONGO_URI)
 // --- SCHEMA (Database Blueprint) ---
 const CertificateSchema = new mongoose.Schema({
     certId: { type: String, required: true, unique: true },
-    name: { type: String, required: true },
-    course: { type: String, required: true },
-    score: String,
+    registrationNumber: String,
+    name: String,
+    fatherName: String,
+    dateOfBirth: String,
+    course: String,
+    courseDuration: String,
+    durationFrom: String,
+    durationTo: String,
+    issueDate: String,
+    fullMarks: String,
+    marksObtained: String,
+    percentage: String,
     grade: String,
-    coordinator: String,
-    date: String,
-    pdfFileName: String // We will store just the filename here
+    center: String,
+    pdfFileName: String
 });
 
 const Certificate = mongoose.model('Certificate', CertificateSchema);
@@ -57,11 +65,27 @@ const upload = multer({ storage: storage });
 // 'pdf' is the key name we will use in the frontend form data
 app.post('/api/upload', upload.single('pdf'), async (req, res) => {
     try {
-        const { certId, name, course, score, grade, coordinator, date } = req.body;
+        console.log('Upload request body:', req.body);
+        const { certId, registrationNumber, name, fatherName, dateOfBirth, course, courseDuration, durationFrom, durationTo, issueDate, fullMarks, marksObtained, percentage, grade, center } = req.body;
         const pdfFileName = req.file ? req.file.filename : null;
 
         const newCert = new Certificate({
-            certId, name, course, score, grade, coordinator, date, pdfFileName
+            certId,
+            registrationNumber,
+            name,
+            fatherName,
+            dateOfBirth,
+            course,
+            courseDuration,
+            durationFrom,
+            durationTo,
+            issueDate,
+            fullMarks,
+            marksObtained,
+            percentage,
+            grade,
+            center,
+            pdfFileName
         });
 
         await newCert.save();
@@ -89,12 +113,15 @@ app.get('/api/certificate/:id', async (req, res) => {
 // 3. EDIT/UPDATE Route (Admin)
 app.put('/api/certificate/:id', async (req, res) => {
     try {
+        console.log('Update request for:', req.params.id);
+        console.log('Update data:', req.body);
         // Note: For simplicity, we are not updating the PDF file here, just text data.
         const updatedCert = await Certificate.findOneAndUpdate(
             { certId: req.params.id }, 
             req.body, 
-            { new: true }
+            { new: true, runValidators: false }
         );
+        console.log('Updated certificate:', updatedCert);
         res.json(updatedCert);
     } catch (error) {
         res.status(500).json({ error: "Update failed" });
