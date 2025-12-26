@@ -1,5 +1,4 @@
-# INTECH Academy - Complete Website
-
+# INTECH GROUPS
 A modern, fully-featured educational website built with React and featuring stunning visual effects, smooth animations, and responsive design.
 
 ## 🚀 Features
