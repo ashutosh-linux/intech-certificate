@@ -160,22 +160,13 @@ const Contact = () => {
 
           {/* Right Section */}
           <div className="contact-right">
-            {/* Verification Section */}
-            <div className="verification-box">
-              <h2>Student Certificate Verification</h2>
-              <p>Query Student Certificate Verification</p>
-              <div className="verification-form">
-                <input type="text" placeholder="Reg No." />
-                <button className="verify-btn">Verify Now</button>
-              </div>
-            </div>
-
+           
             {/* Visit Our Center */}
             <div className="visit-center-box">
               <h3>Visit Our Center</h3>
               <div className="center-info">
                 <MapPin size={20} />
-                <p>38 Shwaun Street Bhanp Road, Cehval Road, Manhan- 728311</p>
+                <p>BANDHU BAZAR, SAHOKHAR, SOHSARAI, BIHAR SHARIF, BIHAR, NALANDA, 803118</p>
               </div>
 
               <h4>Direct Contact</h4>
@@ -192,10 +183,25 @@ const Contact = () => {
 
               {/* Map */}
               <div className="map-container">
-                <div className="map-placeholder">
-                  <p>📍 Location Map</p>
-                  <small>Interactive map would be displayed here</small>
-                </div>
+                <a
+                  href="https://www.google.com/maps/dir/?api=1&destination=25.228444,85.515278"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="map-link"
+                  title="Open directions to Intech"
+                >
+                  <iframe
+                    title="Intech location"
+                    src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d3577.0706496236743!2d85.515278!3d25.228444!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjXCsDEzJzQyLjQiTiA4NcKwMzAnNTUuMCJF!5e0!3m2!1sen!2sin!4v1234567890"
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  />
+                  <div className="map-overlay">
+                    <p>📍 Location Map (tap for directions)</p>
+                    <small>Opens Google Maps with directions</small>
+                  </div>
+                </a>
               </div>
             </div>
           </div>
