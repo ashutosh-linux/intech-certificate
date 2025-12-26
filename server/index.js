@@ -119,10 +119,18 @@ app.post('/api/upload', upload.single('pdf'), async (req, res) => {
     }
 });
 
+// Helper to pull certificate ID when it may include slashes (e.g., ICE/15/1581)
+const getCertIdFromReq = (req) => {
+    // For regex routes below, params[0] holds the capture group
+    return decodeURIComponent(req.params[0] || '');
+};
+
 // 2. SEARCH Route (Student)
-app.get('/api/certificate/:id', async (req, res) => {
+// Regex route to allow slashes in the certificate ID
+app.get(/^\/api\/certificate\/(.+)$/, async (req, res) => {
     try {
-        const cert = await Certificate.findOne({ certId: req.params.id });
+        const certId = getCertIdFromReq(req);
+        const cert = await Certificate.findOne({ certId });
         if (cert) {
             res.json(cert);
         } else {
@@ -134,13 +142,14 @@ app.get('/api/certificate/:id', async (req, res) => {
 });
 
 // 3. EDIT/UPDATE Route (Admin)
-app.put('/api/certificate/:id', async (req, res) => {
+app.put(/^\/api\/certificate\/(.+)$/, async (req, res) => {
     try {
-        console.log('Update request for:', req.params.id);
+        const certId = getCertIdFromReq(req);
+        console.log('Update request for:', certId);
         console.log('Update data:', req.body);
         // Note: For simplicity, we are not updating the PDF file here, just text data.
         const updatedCert = await Certificate.findOneAndUpdate(
-            { certId: req.params.id }, 
+            { certId }, 
             req.body, 
             { new: true, runValidators: false }
         );
@@ -152,9 +161,10 @@ app.put('/api/certificate/:id', async (req, res) => {
 });
 
 // 4. DELETE Route (Admin)
-app.delete('/api/certificate/:id', async (req, res) => {
+app.delete(/^\/api\/certificate\/(.+)$/, async (req, res) => {
     try {
-        const deletedCert = await Certificate.findOneAndDelete({ certId: req.params.id });
+        const certId = getCertIdFromReq(req);
+        const deletedCert = await Certificate.findOneAndDelete({ certId });
         if (deletedCert && deletedCert.pdfFileName) {
             // Optional: Delete the file from the uploads folder too
             const filePath = path.join(__dirname, 'uploads', deletedCert.pdfFileName);
