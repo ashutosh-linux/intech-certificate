@@ -7,7 +7,7 @@ const path = require('path');
 const fs = require('fs');
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 // --- MIDDLEWARE ---
 app.use(cors()); // Allow frontend to talk to backend
@@ -16,9 +16,8 @@ app.use(express.json()); // Allow sending JSON data
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // --- DATABASE CONNECTION ---
-// OPTION A: If you have MongoDB installed locally
-const MONGO_URI = "mongodb+srv://ashutoshintech_db_user:Ashutosh1@ashutosh.2zjs3us.mongodb.net/?appName=ashutosh"; 
-// OPTION B: If using MongoDB Atlas (Cloud), paste your connection string here instead.
+// Use environment variable MONGO_URI from .env or AWS App Runner settings
+const MONGO_URI = process.env.MONGO_URI;
 
 mongoose.connect(MONGO_URI)
 .then(() => console.log("✅ MongoDB Connected Successfully"))
