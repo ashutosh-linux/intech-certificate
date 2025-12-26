@@ -1,17 +1,20 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { Send, Phone, Mail, MapPin, Clock, CheckCircle } from 'lucide-react';
+import { Send, Phone, Mail, MapPin, Clock, CheckCircle, AlertCircle } from 'lucide-react';
 import '../styles/Contact.css';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    course: '',
+    phone: '',
+    subject: '',
     message: ''
   });
 
   const [submitStatus, setSubmitStatus] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,11 +24,24 @@ const Contact = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitStatus('success');
-    setFormData({ name: '', email: '', course: '', message: '' });
-    setTimeout(() => setSubmitStatus(null), 5000);
+    setLoading(true);
+    setSubmitStatus(null);
+
+    try {
+      const response = await axios.post('http://localhost:5000/api/contact', formData);
+      setSubmitStatus({ type: 'success', message: response.data.message });
+      setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+      setTimeout(() => setSubmitStatus(null), 5000);
+    } catch (error) {
+      setSubmitStatus({ 
+        type: 'error', 
+        message: error.response?.data?.error || 'Failed to send message. Please try again.' 
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -65,10 +81,14 @@ const Contact = () => {
           <div className="contact-form-section">
             <h2>Get in Touch</h2>
             
-            {submitStatus === 'success' && (
-              <div className="success-message">
-                <CheckCircle size={20} />
-                <span>Thank you! We'll get back to you soon.</span>
+            {submitStatus && (
+              <div className={`status-message ${submitStatus.type}`}>
+                {submitStatus.type === 'success' ? (
+                  <CheckCircle size={20} />
+                ) : (
+                  <AlertCircle size={20} />
+                )}
+                <span>{submitStatus.message}</span>
               </div>
             )}
 
@@ -78,7 +98,7 @@ const Contact = () => {
                 <input
                   type="text"
                   name="name"
-                  placeholder="Name"
+                  placeholder="Your full name"
                   value={formData.name}
                   onChange={handleChange}
                   required
@@ -90,7 +110,7 @@ const Contact = () => {
                 <input
                   type="email"
                   name="email"
-                  placeholder="Email"
+                  placeholder="Your email address"
                   value={formData.email}
                   onChange={handleChange}
                   required
@@ -98,19 +118,26 @@ const Contact = () => {
               </div>
 
               <div className="form-group">
-                <label>Interested Course *</label>
-                <select
-                  name="course"
-                  value={formData.course}
+                <label>Phone Number</label>
+                <input
+                  type="tel"
+                  name="phone"
+                  placeholder="Your phone number"
+                  value={formData.phone}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Subject *</label>
+                <input
+                  type="text"
+                  name="subject"
+                  placeholder="Subject of your inquiry"
+                  value={formData.subject}
                   onChange={handleChange}
                   required
-                >
-                  <option value="">Select a course</option>
-                  <option value="DCA">DCA (Diploma in Computer Application)</option>
-                  <option value="DTP">DTP (Desktop Publishing)</option>
-                  <option value="Tally">Tally Prime (Accounting Expert)</option>
-                  <option value="C++/Java">C++ / Java (Adv. Course)</option>
-                </select>
+                />
               </div>
 
               <div className="form-group">

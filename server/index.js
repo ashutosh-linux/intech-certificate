@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -45,7 +46,29 @@ const CertificateSchema = new mongoose.Schema({
 
 const Certificate = mongoose.model('Certificate', CertificateSchema);
 
-// --- FILE STORAGE CONFIG (Multer) ---
+// --- CONTACT MESSAGE SCHEMA ---
+const ContactSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    email: { type: String, required: true },
+    phone: String,
+    subject: String,
+    message: { type: String, required: true },
+    isRead: { type: Boolean, default: false },
+    createdAt: { type: Date, default: Date.now }
+});
+
+const Contact = mongoose.model('Contact', ContactSchema);
+
+// --- QUERY SCHEMA ---
+const QuerySchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    email: { type: String, required: true },
+    subject: { type: String, required: true },
+    message: { type: String, required: true },
+    createdAt: { type: Date, default: Date.now }
+});
+
+const Query = mongoose.model('Query', QuerySchema);
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'uploads/'); // Save files in 'uploads' folder
@@ -153,6 +176,83 @@ app.get('/api/certificates', async (req, res) => {
         res.status(500).json({ error: "Server Error" });
     }
 });
+
+// 6. CONTACT FORM SUBMISSION Route (Student/User)
+app.post('/api/contact', async (req, res) => {
+    try {
+        console.log('Contact form submission:', req.body);
+        const { name, email, phone, subject, message } = req.body;
+        
+        // Save to database (Contact collection for admin inbox)
+        const newContact = new Contact({
+            name,
+            email,
+            phone,
+            subject,
+            message,
+            isRead: false
+        });
+
+        // Save to Queries collection for new query section
+        const newQuery = new Query({
+            name,
+            email,
+            subject,
+            message
+        });
+        
+        await Promise.all([newContact.save(), newQuery.save()]);
+        res.status(201).json({ message: "Thank you! We received your message and will get back to you soon." });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Failed to submit contact form" });
+    }
+});
+
+// 7. GET ALL CONTACTS Route (Admin)
+app.get('/api/contacts', async (req, res) => {
+    try {
+        const allContacts = await Contact.find().sort({ createdAt: -1 });
+        res.json(allContacts);
+    } catch (error) {
+        res.status(500).json({ error: "Server Error" });
+    }
+});
+
+// 7b. GET ALL QUERIES Route (Admin - Query Section)
+app.get('/api/queries', async (req, res) => {
+    try {
+        const allQueries = await Query.find().sort({ createdAt: -1 });
+        res.json(allQueries);
+    } catch (error) {
+        res.status(500).json({ error: "Server Error" });
+    }
+});
+
+// 8. MARK CONTACT AS READ (Admin)
+app.put('/api/contact/:id/read', async (req, res) => {
+    try {
+        const updatedContact = await Contact.findByIdAndUpdate(
+            req.params.id,
+            { isRead: true },
+            { new: true }
+        );
+        res.json(updatedContact);
+    } catch (error) {
+        res.status(500).json({ error: "Update failed" });
+    }
+});
+
+// 9. DELETE CONTACT (Admin)
+app.delete('/api/contact/:id', async (req, res) => {
+    try {
+        await Contact.findByIdAndDelete(req.params.id);
+        res.json({ message: "Contact deleted successfully" });
+    } catch (error) {
+        res.status(500).json({ error: "Delete failed" });
+    }
+});
+
 // --- START SERVER ---
 app.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);

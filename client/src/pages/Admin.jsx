@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { LayoutDashboard, LogOut, Plus, Trash2, FileText, CheckCircle, ArrowRight } from 'lucide-react';
+import { LayoutDashboard, LogOut, Plus, Trash2, FileText, CheckCircle, ArrowRight, Mail, Eye, EyeOff } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import '../styles/Admin.css';
 
@@ -9,7 +9,9 @@ const Admin = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   
+  const [activeTab, setActiveTab] = useState('certificates');
   const [certificates, setCertificates] = useState([]);
+  const [contacts, setContacts] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editId, setEditId] = useState(null);
@@ -37,8 +39,8 @@ const Admin = () => {
   // --- ACTIONS ---
   const handleLogin = (e) => {
     e.preventDefault();
-    if (username === 'admin' && password === 'admin123') setIsLoggedIn(true);
-    else alert('Invalid Password');
+    if (username === 'intech9304@gmail.com' && password === 'Nandu@1317') setIsLoggedIn(true);
+    else alert('Invalid Credentials');
   };
 
   const fetchData = async () => {
@@ -46,12 +48,33 @@ const Admin = () => {
     catch (err) { console.error("Error"); }
   };
 
-  useEffect(() => { if (isLoggedIn) fetchData(); }, [isLoggedIn]);
+  const fetchContacts = async () => {
+    try { const res = await axios.get('http://localhost:5000/api/contacts'); setContacts(res.data); } 
+    catch (err) { console.error("Error fetching contacts"); }
+  };
+
+  useEffect(() => { if (isLoggedIn) { fetchData(); fetchContacts(); } }, [isLoggedIn]);
 
   const handleDelete = async (id) => {
     if(window.confirm('Delete this record?')) {
     await axios.delete(`http://localhost:5000/api/certificate/${id}`);
     fetchData();
+    }
+  };
+
+  const handleDeleteContact = async (id) => {
+    if(window.confirm('Delete this message?')) {
+      await axios.delete(`http://localhost:5000/api/contact/${id}`);
+      fetchContacts();
+    }
+  };
+
+  const handleMarkAsRead = async (id) => {
+    try {
+      await axios.put(`http://localhost:5000/api/contact/${id}/read`);
+      fetchContacts();
+    } catch (err) {
+      console.error("Error marking as read");
     }
   };
 
@@ -224,6 +247,9 @@ const Admin = () => {
               <LayoutDashboard size={18} />
               Dashboard
             </div>
+            <Link to="/admin/queries" className="menu-item">
+              <Mail size={18} /> Queries
+            </Link>
           </div>
           <div className="sidebar-footer">
             <button 
@@ -271,6 +297,25 @@ const Admin = () => {
 
             {/* Table Section */}
             <div className="table-card">
+              {/* Tab Navigation */}
+              <div className="tab-navigation">
+                <button 
+                  className={`tab-btn ${activeTab === 'certificates' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('certificates')}
+                >
+                  <FileText size={16} /> Certificates ({certificates.length})
+                </button>
+                <button 
+                  className={`tab-btn ${activeTab === 'contacts' ? 'active' : ''}`}
+                  onClick={() => setActiveTab('contacts')}
+                >
+                  <Mail size={16} /> Contact Queries ({contacts.filter(c => !c.isRead).length})
+                </button>
+              </div>
+
+              {/* CERTIFICATES TAB */}
+              {activeTab === 'certificates' && (
+              <>
               <div className="table-header">
                 <h3>Recent Certificates</h3>
                 <button onClick={() => { resetForm(); setShowForm(!showForm); }} className="add-btn">
@@ -350,6 +395,77 @@ const Admin = () => {
                   </tbody>
                 </table>
               </div>
+              </>
+              )}
+
+              {/* CONTACTS TAB */}
+              {activeTab === 'contacts' && (
+              <div className="contacts-section">
+                <div className="table-header">
+                  <h3>Contact Queries</h3>
+                  <span className="unread-badge">{contacts.filter(c => !c.isRead).length} unread</span>
+                </div>
+
+                <div className="table-container">
+                  <table className="data-table">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Subject</th>
+                        <th>Message</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {contacts.map(contact => (
+                        <tr key={contact._id} className={contact.isRead ? 'read' : 'unread'}>
+                          <td>{contact.name}</td>
+                          <td>{contact.email}</td>
+                          <td>{contact.phone || '-'}</td>
+                          <td><strong>{contact.subject}</strong></td>
+                          <td className="message-cell" title={contact.message}>{contact.message.substring(0, 50)}...</td>
+                          <td>{new Date(contact.createdAt).toLocaleDateString()}</td>
+                          <td>
+                            {contact.isRead ? (
+                              <span className="status-badge read">
+                                <Eye size={14} /> Read
+                              </span>
+                            ) : (
+                              <span className="status-badge unread">
+                                <EyeOff size={14} /> Unread
+                              </span>
+                            )}
+                          </td>
+                          <td>
+                            {!contact.isRead && (
+                              <button 
+                                onClick={() => handleMarkAsRead(contact._id)} 
+                                className="mark-read-btn"
+                                title="Mark as read"
+                              >
+                                <Eye size={14}/>
+                              </button>
+                            )}
+                            <button 
+                              onClick={() => handleDeleteContact(contact._id)} 
+                              className="delete-btn"
+                              title="Delete"
+                            >
+                              <Trash2 size={14}/>
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                      {contacts.length === 0 && <tr><td colSpan="8" className="empty-state">No contact queries yet.</td></tr>}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              )}
             </div>
           </div>
         </div>
