@@ -25,7 +25,7 @@ const Home = () => {
     try {
       // Simulate a "searching" delay for effect
       await new Promise(resolve => setTimeout(resolve, 600)); 
-      const response = await axios.get(`http://localhost:5000/api/certificate/${certId}`);
+      const response = await axios.get(`/api/certificate/${certId}`);
       console.log("Database Response:", response.data);
       setResult(response.data);
     } catch (err) {
@@ -162,7 +162,7 @@ const Home = () => {
               </div>
 
               {result?.pdfFileName && (
-                <a href={`http://localhost:5000/uploads/${result.pdfFileName}`} target="_blank" className="download-btn">
+                <a href={`/uploads/${result.pdfFileName}`} target="_blank" className="download-btn">
                   <Download size={18}/> Download Official Certificate PDF
                 </a>
               )}

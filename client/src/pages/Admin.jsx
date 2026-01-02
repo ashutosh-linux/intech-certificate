@@ -44,12 +44,12 @@ const Admin = () => {
   };
 
   const fetchData = async () => {
-    try { const res = await axios.get('http://localhost:5000/api/certificates'); setCertificates(res.data); } 
+    try { const res = await axios.get('/api/certificates'); setCertificates(res.data); } 
     catch (err) { console.error("Error"); }
   };
 
   const fetchContacts = async () => {
-    try { const res = await axios.get('http://localhost:5000/api/contacts'); setContacts(res.data); } 
+    try { const res = await axios.get('/api/contacts'); setContacts(res.data); } 
     catch (err) { console.error("Error fetching contacts"); }
   };
 
@@ -57,21 +57,21 @@ const Admin = () => {
 
   const handleDelete = async (id) => {
     if(window.confirm('Delete this record?')) {
-    await axios.delete(`http://localhost:5000/api/certificate/${id}`);
+    await axios.delete(`/api/certificate/${id}`);
     fetchData();
     }
   };
 
   const handleDeleteContact = async (id) => {
     if(window.confirm('Delete this message?')) {
-      await axios.delete(`http://localhost:5000/api/contact/${id}`);
+      await axios.delete(`/api/contact/${id}`);
       fetchContacts();
     }
   };
 
   const handleMarkAsRead = async (id) => {
     try {
-      await axios.put(`http://localhost:5000/api/contact/${id}/read`);
+      await axios.put(`/api/contact/${id}/read`);
       fetchContacts();
     } catch (err) {
       console.error("Error marking as read");
@@ -85,7 +85,7 @@ const Admin = () => {
     if(file) data.append('pdf', file);
 
     try {
-      await axios.post('http://localhost:5000/api/upload', data, { headers: { 'Content-Type': 'multipart/form-data' } });
+      await axios.post('/api/upload', data, { headers: { 'Content-Type': 'multipart/form-data' } });
       alert('Success'); setShowForm(false); fetchData();
     } catch (err) { alert('Failed'); }
   };
@@ -117,7 +117,7 @@ const Admin = () => {
   const handleSaveEdit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`http://localhost:5000/api/certificate/${editId}`, formData);
+      await axios.put(`/api/certificate/${editId}`, formData);
       alert('Certificate updated successfully');
       setIsEditing(false);
       setShowForm(false);
