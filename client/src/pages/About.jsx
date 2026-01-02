@@ -10,7 +10,7 @@ const About = () => {
       <nav className="nav-bar">
         <div className="nav-container">
           <div className="nav-brand">
-            <div className="logo-icon">Ⓘ</div>
+            <img src="/favicon.png" alt="INTECH Logo" className="logo-icon" />
             <div className="brand-text">
               <h1>INTECH</h1>
               <p>Computer Education</p>
