@@ -44,12 +44,12 @@ const Admin = () => {
   };
 
   const fetchData = async () => {
-    try { const res = await axios.get('/api/certificates'); setCertificates(res.data); } 
+    try { const res = await axios.get('https://32hhfkhdm9.us-east-1.awsapprunner.com/api/certificates'); setCertificates(res.data); } 
     catch (err) { console.error("Error"); }
   };
 
   const fetchContacts = async () => {
-    try { const res = await axios.get('/api/contacts'); setContacts(res.data); } 
+    try { const res = await axios.get('https://32hhfkhdm9.us-east-1.awsapprunner.com/api/contacts'); setContacts(res.data); } 
     catch (err) { console.error("Error fetching contacts"); }
   };
 
@@ -57,21 +57,21 @@ const Admin = () => {
 
   const handleDelete = async (id) => {
     if(window.confirm('Delete this record?')) {
-    await axios.delete(`/api/certificate/${id}`);
+    await axios.delete(`https://32hhfkhdm9.us-east-1.awsapprunner.com/api/certificate/${id}`);
     fetchData();
     }
   };
 
   const handleDeleteContact = async (id) => {
     if(window.confirm('Delete this message?')) {
-      await axios.delete(`/api/contact/${id}`);
+      await axios.delete(`https://32hhfkhdm9.us-east-1.awsapprunner.com/api/contact/${id}`);
       fetchContacts();
     }
   };
 
   const handleMarkAsRead = async (id) => {
     try {
-      await axios.put(`/api/contact/${id}/read`);
+      await axios.put(`https://32hhfkhdm9.us-east-1.awsapprunner.com/api/contact/${id}/read`);
       fetchContacts();
     } catch (err) {
       console.error("Error marking as read");
@@ -85,7 +85,7 @@ const Admin = () => {
     if(file) data.append('pdf', file);
 
     try {
-      await axios.post('/api/upload', data, { headers: { 'Content-Type': 'multipart/form-data' } });
+      await axios.post('https://32hhfkhdm9.us-east-1.awsapprunner.com/api/upload', data, { headers: { 'Content-Type': 'multipart/form-data' } });
       alert('Success'); setShowForm(false); fetchData();
     } catch (err) { alert('Failed'); }
   };
@@ -117,7 +117,7 @@ const Admin = () => {
   const handleSaveEdit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`/api/certificate/${editId}`, formData);
+      await axios.put(`https://32hhfkhdm9.us-east-1.awsapprunner.com/api/certificate/${editId}`, formData);
       alert('Certificate updated successfully');
       setIsEditing(false);
       setShowForm(false);

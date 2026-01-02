@@ -30,7 +30,7 @@ const Contact = () => {
     setSubmitStatus(null);
 
     try {
-      const response = await axios.post('/api/contact', formData);
+      const response = await axios.post('https://32hhfkhdm9.us-east-1.awsapprunner.com/api/contact', formData);
       setSubmitStatus({ type: 'success', message: response.data.message });
       setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
       setTimeout(() => setSubmitStatus(null), 5000);

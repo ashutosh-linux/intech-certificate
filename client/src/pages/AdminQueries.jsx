@@ -12,7 +12,7 @@ const AdminQueries = () => {
   const fetchQueries = async () => {
     try {
       setLoading(true);
-      const res = await axios.get('/api/queries');
+      const res = await axios.get('https://32hhfkhdm9.us-east-1.awsapprunner.com/api/queries');
       setQueries(res.data);
       setError(null);
     } catch (err) {
